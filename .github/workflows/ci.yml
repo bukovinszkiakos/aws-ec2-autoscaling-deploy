@@ -23,8 +23,15 @@ jobs:
 
       - run: dotnet restore app/BeaconApi.slnx
 
-      - run: dotnet build --no-restore -c Release
+      - run: dotnet build app/BeaconApi.slnx --no-restore -c Release
 
-      - run: dotnet test --no-build -c Release
+      - run: dotnet test app/BeaconApi.slnx --no-build -c Release
 
       - run: docker build -t beacon-api:ci app/BeaconApi
+
+      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: beacon-api:ci
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '1'
