@@ -26,3 +26,5 @@ jobs:
       - run: dotnet build --no-restore -c Release
 
       - run: dotnet test --no-build -c Release
+
+      - run: docker build -t beacon-api:ci app/BeaconApi
