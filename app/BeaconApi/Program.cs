@@ -12,6 +12,9 @@ app.MapGet("/", (IConfiguration config) => new InstanceResponse(
     Hostname:         Environment.MachineName,
     Timestamp:        DateTime.UtcNow));
 
+app.MapGet("/version", (IConfiguration config) =>
+    new { version = config["APP_VERSION"] ?? "local" });
+
 app.MapHealthChecks("/health");
 
 app.Run();
