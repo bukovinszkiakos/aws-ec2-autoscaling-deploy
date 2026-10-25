@@ -10,3 +10,11 @@ module "network" {
   name = local.name
   azs  = slice(data.aws_availability_zones.available.names, 0, 2)
 }
+
+module "alb" {
+  source = "./modules/alb"
+
+  name              = local.name
+  vpc_id            = module.network.vpc_id
+  public_subnet_ids = module.network.public_subnet_ids
+}
