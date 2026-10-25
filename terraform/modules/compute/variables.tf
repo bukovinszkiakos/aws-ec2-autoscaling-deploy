@@ -33,3 +33,31 @@ variable "aws_region" {
   description = "AWS region, used in the ECR login command."
   type        = string
 }
+
+variable "private_subnet_ids" {
+  description = "IDs of the private subnets for the Auto Scaling Group."
+  type        = list(string)
+}
+
+variable "target_group_arn" {
+  description = "ARN of the ALB target group to attach instances to."
+  type        = string
+}
+
+variable "min_size" {
+  description = "Minimum number of instances in the Auto Scaling Group."
+  type        = number
+  default     = 2
+}
+
+variable "max_size" {
+  description = "Maximum number of instances in the Auto Scaling Group."
+  type        = number
+  default     = 4
+}
+
+variable "desired_capacity" {
+  description = "Desired number of instances in the Auto Scaling Group."
+  type        = number
+  default     = 2
+}
