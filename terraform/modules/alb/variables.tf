@@ -12,3 +12,9 @@ variable "public_subnet_ids" {
   description = "IDs of the public subnets for the ALB."
   type        = list(string)
 }
+
+variable "health_check_path" {
+  description = "HTTP path used for ALB target group health checks."
+  type        = string
+  default     = "/health"
+}
