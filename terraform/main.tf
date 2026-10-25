@@ -4,6 +4,10 @@ locals {
 
 data "aws_availability_zones" "available" {}
 
+data "aws_ecr_repository" "app" {
+  name = var.ecr_repository_name
+}
+
 module "network" {
   source = "./modules/network"
 
@@ -25,4 +29,7 @@ module "compute" {
   name                  = local.name
   vpc_id                = module.network.vpc_id
   alb_security_group_id = module.alb.alb_security_group_id
+  aws_region            = var.aws_region
+  ecr_repository_url    = data.aws_ecr_repository.app.repository_url
+  image_tag             = var.image_tag
 }

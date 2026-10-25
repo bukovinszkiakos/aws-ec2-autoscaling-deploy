@@ -1,0 +1,40 @@
+#!/bin/bash
+set -euo pipefail
+
+dnf install -y docker
+systemctl enable --now docker
+
+TOKEN=$$(curl -sf -X PUT \
+  -H "X-aws-ec2-metadata-token-ttl-seconds: 60" \
+  "http://169.254.169.254/latest/api/token")
+
+INSTANCE_ID=$$(curl -sf \
+  -H "X-aws-ec2-metadata-token: $${TOKEN}" \
+  "http://169.254.169.254/latest/meta-data/instance-id")
+
+AZ=$$(curl -sf \
+  -H "X-aws-ec2-metadata-token: $${TOKEN}" \
+  "http://169.254.169.254/latest/meta-data/placement/availability-zone")
+
+aws ecr get-login-password --region ${aws_region} \
+  | docker login --username AWS --password-stdin ${ecr_registry_host}
+
+for attempt in 1 2 3 4 5; do
+  if docker pull ${ecr_repository_url}:${image_tag}; then
+    break
+  elif [ $${attempt} -lt 5 ]; then
+    sleep 10
+  else
+    echo "Failed to pull image after 5 attempts" >&2
+    exit 1
+  fi
+done
+
+docker run -d \
+  --name beacon \
+  --restart always \
+  -p 80:8080 \
+  -e APP_VERSION=${image_tag} \
+  -e INSTANCE_ID=$${INSTANCE_ID} \
+  -e AVAILABILITY_ZONE=$${AZ} \
+  ${ecr_repository_url}:${image_tag}
