@@ -1,0 +1,5 @@
+aws_region          = "eu-central-1"
+project_name        = "beacon"
+environment         = "demo"
+ecr_repository_name = "beacon-api"
+image_tag           = "abc1234"

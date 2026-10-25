@@ -1,0 +1,5 @@
+bucket       = "beacon-tfstate-<account-id>"
+key          = "beacon/infra.tfstate"
+region       = "eu-central-1"
+encrypt      = true
+use_lockfile = true
