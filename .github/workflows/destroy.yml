@@ -1,0 +1,51 @@
+name: Destroy
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "destroy" to confirm teardown of the main stack'
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: aws-demo-environment
+  cancel-in-progress: false
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Confirm destroy
+        run: |
+          if [[ "${{ inputs.confirm }}" != "destroy" ]]; then
+            echo "Confirmation input must be exactly 'destroy'." >&2
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.11"
+          terraform_wrapper: false
+
+      - run: |
+          terraform -chdir=terraform init \
+            -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
+            -backend-config="key=beacon/infra.tfstate" \
+            -backend-config="region=${{ vars.AWS_REGION }}" \
+            -backend-config="encrypt=true" \
+            -backend-config="use_lockfile=true"
+
+      - run: terraform -chdir=terraform destroy -auto-approve -input=false -var image_tag=destroy
