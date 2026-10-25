@@ -89,7 +89,7 @@ resource "aws_iam_role_policy_attachment" "github_actions_ecr" {
 data "aws_iam_policy_document" "github_actions_state" {
   statement {
     effect    = "Allow"
-    actions   = ["s3:ListBucket", "s3:GetBucketVersioning"]
+    actions   = ["s3:ListBucket", "s3:GetBucketVersioning", "s3:GetBucketLocation"]
     resources = [aws_s3_bucket.tfstate.arn]
   }
 
