@@ -51,8 +51,6 @@ resource "aws_eip" "nat" {
   }
 }
 
-# One NAT gateway in the first public subnet. One per AZ would survive an AZ
-# failure but doubles the cost — a single NAT gateway is the accepted trade-off here.
 resource "aws_nat_gateway" "this" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public[0].id
