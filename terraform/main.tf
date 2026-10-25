@@ -22,5 +22,7 @@ module "alb" {
 module "compute" {
   source = "./modules/compute"
 
-  name = local.name
+  name                  = local.name
+  vpc_id                = module.network.vpc_id
+  alb_security_group_id = module.alb.alb_security_group_id
 }
