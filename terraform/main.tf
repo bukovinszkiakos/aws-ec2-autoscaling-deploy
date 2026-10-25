@@ -18,3 +18,9 @@ module "alb" {
   vpc_id            = module.network.vpc_id
   public_subnet_ids = module.network.public_subnet_ids
 }
+
+module "compute" {
+  source = "./modules/compute"
+
+  name = local.name
+}
