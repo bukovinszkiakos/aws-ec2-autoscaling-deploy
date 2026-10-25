@@ -21,3 +21,9 @@ variable "github_repo" {
   type        = string
   default     = "aws-ec2-autoscaling-deploy"
 }
+
+variable "create_oidc_provider" {
+  description = "Set to true to create the GitHub Actions OIDC provider. An AWS account can only have one provider per issuer URL; if another project already created it, leave this false and Terraform will look it up instead."
+  type        = bool
+  default     = false
+}

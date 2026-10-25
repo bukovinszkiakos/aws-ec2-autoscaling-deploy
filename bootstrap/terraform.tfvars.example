@@ -2,3 +2,5 @@ aws_region   = "eu-central-1"
 project_name = "beacon"
 github_owner = "bukovinszkiakos"
 github_repo  = "aws-ec2-autoscaling-deploy"
+
+create_oidc_provider = false
