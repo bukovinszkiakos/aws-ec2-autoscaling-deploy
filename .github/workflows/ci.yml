@@ -29,6 +29,36 @@ jobs:
       - run: terraform -chdir=terraform init -backend=false
       - run: terraform -chdir=terraform validate
 
+  terraform-plan:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: terraform-checks
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.11"
+          terraform_wrapper: false
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - run: |
+          terraform -chdir=terraform init \
+            -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
+            -backend-config="key=beacon/infra.tfstate" \
+            -backend-config="region=${{ vars.AWS_REGION }}" \
+            -backend-config="encrypt=true" \
+            -backend-config="use_lockfile=true"
+
+      - run: terraform -chdir=terraform plan -lock=false -input=false -var image_tag=${{ github.sha }}
+
   app:
     runs-on: ubuntu-latest
     steps:
