@@ -16,7 +16,8 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 
 locals {
-  oidc_provider_arn = var.create_oidc_provider ? aws_iam_openid_connect_provider.github[0].arn : data.aws_iam_openid_connect_provider.github[0].arn
+  oidc_provider_arn   = var.create_oidc_provider ? aws_iam_openid_connect_provider.github[0].arn : data.aws_iam_openid_connect_provider.github[0].arn
+  oidc_subject_prefix = "repo:${var.github_owner}@${var.github_owner_id}/${var.github_repo}@${var.github_repo_id}"
 }
 
 data "aws_iam_policy_document" "github_actions_trust" {
@@ -39,9 +40,9 @@ data "aws_iam_policy_document" "github_actions_trust" {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
-        "repo:${var.github_owner}/${var.github_repo}:pull_request",
-        "repo:${var.github_owner}/${var.github_repo}:ref:refs/heads/main",
-        "repo:${var.github_owner}/${var.github_repo}:environment:production",
+        "${local.oidc_subject_prefix}:pull_request",
+        "${local.oidc_subject_prefix}:ref:refs/heads/main",
+        "${local.oidc_subject_prefix}:environment:production",
       ]
     }
   }
