@@ -72,6 +72,7 @@ data "aws_iam_policy_document" "github_actions_ecr" {
       "ecr:CompleteLayerUpload",
       "ecr:DescribeImages",
       "ecr:DescribeRepositories",
+      "ecr:ListTagsForResource",
     ]
     resources = [aws_ecr_repository.app.arn]
   }
