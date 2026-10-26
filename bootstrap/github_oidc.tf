@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "github_actions_trust" {
     }
 
     condition {
-      test     = "StringLike"
+      test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
         "repo:${var.github_owner}/${var.github_repo}:pull_request",
@@ -156,6 +156,7 @@ data "aws_iam_policy_document" "github_actions_infra" {
       "ec2:AuthorizeSecurityGroupEgress",
       "ec2:RevokeSecurityGroupEgress",
       "ec2:DescribeSecurityGroupRules",
+      "ec2:ModifySecurityGroupRules",
       # Launch templates
       "ec2:CreateLaunchTemplate",
       "ec2:DeleteLaunchTemplate",
@@ -164,7 +165,6 @@ data "aws_iam_policy_document" "github_actions_infra" {
       "ec2:DeleteLaunchTemplateVersion",
       "ec2:DescribeLaunchTemplateVersions",
       "ec2:GetLaunchTemplateData",
-      # General EC2 reads required by the Terraform AWS provider
       "ec2:DescribeImages",
       "ec2:DescribeInstances",
       "ec2:DescribeAvailabilityZones",
@@ -242,10 +242,6 @@ data "aws_iam_policy_document" "github_actions_iam" {
       "iam:GetRole",
       "iam:TagRole",
       "iam:UntagRole",
-      "iam:PutRolePolicy",
-      "iam:DeleteRolePolicy",
-      "iam:GetRolePolicy",
-      "iam:ListRolePolicies",
       "iam:ListAttachedRolePolicies",
       "iam:ListInstanceProfilesForRole",
       "iam:CreateInstanceProfile",
