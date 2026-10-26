@@ -221,6 +221,12 @@ data "aws_iam_policy_document" "github_actions_infra" {
   }
 
   statement {
+    effect    = "Allow"
+    actions   = ["elasticloadbalancing:DescribeTargetHealth"]
+    resources = ["arn:aws:elasticloadbalancing:${var.aws_region}:${data.aws_caller_identity.current.account_id}:targetgroup/*"]
+  }
+
+  statement {
     effect  = "Allow"
     actions = ["ec2:RunInstances"]
     resources = [
