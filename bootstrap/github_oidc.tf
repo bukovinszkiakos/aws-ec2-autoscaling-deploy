@@ -221,9 +221,17 @@ data "aws_iam_policy_document" "github_actions_infra" {
   }
 
   statement {
-    effect    = "Allow"
-    actions   = ["ec2:RunInstances"]
-    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:launch-template/*"]
+    effect  = "Allow"
+    actions = ["ec2:RunInstances"]
+    resources = [
+      "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:launch-template/*",
+      "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:instance/*",
+      "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:volume/*",
+      "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:network-interface/*",
+      "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:security-group/*",
+      "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:subnet/*",
+      "arn:aws:ec2:${var.aws_region}::image/*",
+    ]
   }
 
   statement {
