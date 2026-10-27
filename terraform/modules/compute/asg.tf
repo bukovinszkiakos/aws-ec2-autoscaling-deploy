@@ -7,7 +7,7 @@ resource "aws_autoscaling_group" "this" {
 
   target_group_arns         = [var.target_group_arn]
   health_check_type         = "ELB"
-  health_check_grace_period = 120
+  health_check_grace_period = 300
 
   launch_template {
     id      = aws_launch_template.this.id
@@ -18,7 +18,7 @@ resource "aws_autoscaling_group" "this" {
     strategy = "Rolling"
     preferences {
       min_healthy_percentage = 50
-      instance_warmup        = 90
+      instance_warmup        = 180
     }
   }
 
