@@ -58,7 +58,8 @@ fi
 
 # ── Detect whether bootstrap has been applied ─────────────────────────────────
 step "Checking bootstrap Terraform state"
-ROLE_ARN="$(terraform -chdir=bootstrap output -raw github_actions_role_arn 2>/dev/null)"
+ROLE_ARN="$(terraform -chdir=bootstrap output -raw github_actions_role_arn 2>/dev/null)" || true
+[[ "$ROLE_ARN" == "arn:aws:iam::554422868760:role/beacon-github-actions" ]] || ROLE_ARN=""
 
 # ── Phase 1: not yet applied ───────────────────────────────────────────────────
 if [ -z "$ROLE_ARN" ]; then
@@ -89,7 +90,9 @@ ok "Bootstrap state found"
 
 step "Reading Terraform outputs"
 STATE_BUCKET="$(terraform -chdir=bootstrap output -raw state_bucket_name)"
+[[ "$STATE_BUCKET" == "beacon-tfstate-554422868760" ]] || fail "state_bucket_name output is unexpected or missing (got: ${STATE_BUCKET}); re-run after a successful terraform apply."
 ECR_REPO="$(terraform -chdir=bootstrap output -raw ecr_repository_name)"
+[[ "$ECR_REPO" == "beacon-api" ]] || fail "ecr_repository_name output is unexpected or missing (got: ${ECR_REPO}); re-run after a successful terraform apply."
 ok "github_actions_role_arn  ->  $ROLE_ARN"
 ok "state_bucket_name        ->  $STATE_BUCKET"
 ok "ecr_repository_name      ->  $ECR_REPO"
