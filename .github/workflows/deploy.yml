@@ -20,6 +20,7 @@ concurrency:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    if: vars.DEPLOY_ENABLED == 'true'
     steps:
       - uses: actions/checkout@v4
 
