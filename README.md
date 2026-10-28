@@ -510,12 +510,27 @@ Retaining these resources allows the environment to be provisioned again without
 
 It is designed to remove the project's ECR repository, IAM role and associated policies, and the versioned S3 Terraform state bucket. It intentionally preserves the shared GitHub OIDC provider.
 
-Before using this script:
+**Before using this script:**
 
 - Ensure the main application infrastructure has been destroyed.
 - Verify that the bootstrap resources are dedicated to this project.
 - Review the script and its confirmation prompts.
 - Remember that deleting the state bucket and bootstrap resources means the bootstrap must be recreated before another deployment.
+
+**Account-specific configuration**
+
+The `scripts/destroy-bootstrap.sh` script is configured for the original project owner's AWS account. If you use this project in a different AWS account, review and update the following values in the script before running it:
+
+- **AWS account ID:** Replace `554422868760` in the AWS account verification check with your own AWS account ID.
+- **AWS region:** Update `AWS_DEFAULT_REGION` to match the region where your bootstrap resources are deployed.
+- **S3 state bucket:** Update `BUCKET` to match your bootstrap S3 bucket name.
+- **Terraform state key:** Update `beacon/infra.tfstate` in the S3 state path if you use a different key in your Terraform backend configuration.
+- **Project-specific resource names and tags:** If you change the project naming convention, review the ECR repository and IAM role names shown in the confirmation message, as well as the `Project=beacon` tag filters used to check for remaining application resources.
+- **Terraform state resource addresses:** If you modify the bootstrap Terraform resource names, review the resource addresses used by the `terraform state rm` command to ensure they match your actual bootstrap state.
+
+Keep the account verification, resource checks, and explicit confirmation prompt in place. Verify that all configured values match your actual infrastructure before running this destructive script.
+
+The script expects the GitHub OIDC provider to be external to the bootstrap Terraform state. If the provider is managed as a Terraform resource in that state, the script will abort rather than risk deleting it. Review the state and OIDC configuration before proceeding.
 
 ## Troubleshooting
 
